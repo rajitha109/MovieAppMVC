@@ -1,1 +1,1 @@
-# MVC1
+# Simple Movie App MVC
