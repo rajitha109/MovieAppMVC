@@ -20,14 +20,13 @@ namespace MVC1.Controllers
         }
 
         // GET: Movies
-        
-        public async Task<IActionResult> Index(string movieGenre,string searchString)
+        // GET: Movies
+        public async Task<IActionResult> Index(string movieGenre, string searchString)
         {
             // Use LINQ to get list of genres.
             IQueryable<string> genreQuery = from m in _db.Movie
                                             orderby m.Genre
                                             select m.Genre;
-
             var movies = from m in _db.Movie
                          select m;
 
@@ -47,9 +46,26 @@ namespace MVC1.Controllers
                 Movies = await movies.ToListAsync()
             };
 
-
             return View(movieGenreVM);
         }
+
+        /*stored procedure to search
+        public IActionResult search(string searchString)
+        {
+           
+
+            var movies = from m in _db.Movie
+                         select m;
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                movies = _db.Movie.FromSqlRaw($"search {searchString}");
+                Console.WriteLine(movies);
+                return View(movies);
+            }
+
+            return View(movies);
+        }*/
 
         // GET: Movies/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -68,6 +84,8 @@ namespace MVC1.Controllers
 
             return View(movie);
         }
+  
+
 
         // GET: Movies/Create
         public IActionResult Create()
@@ -80,7 +98,7 @@ namespace MVC1.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,ReleaseDate,Genre,Price")] Movie movie)
+        public async Task<IActionResult> Create([Bind("Id,Title,ReleaseDate,Genre,Price,Rating")] Movie movie)
         {
             if (ModelState.IsValid)
             {
@@ -112,7 +130,7 @@ namespace MVC1.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,ReleaseDate,Genre,Price")] Movie movie)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,ReleaseDate,Genre,Price,Rating")] Movie movie)
         {
             if (id != movie.Id)
             {
@@ -174,14 +192,14 @@ namespace MVC1.Controllers
             {
                 _db.Movie.Remove(movie);
             }
-            
+
             await _db.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool MovieExists(int id)
         {
-          return _db.Movie.Any(e => e.Id == id);
+            return _db.Movie.Any(e => e.Id == id);
         }
     }
 }
